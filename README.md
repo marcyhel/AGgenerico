@@ -15,7 +15,7 @@ from aggenerico import AG
 Para que possa funcionar corretamente devemos separar em duas partes, uma com a interface do indviduo e a outra a classe do algoritimo gnetico
 primeiro devemos implementar a interface `AG.Individuo` 
 ```python
-class cc (AG.Individuo):
+class Algo (AG.Individuo):
   def __init__(self):
     super().__init__()
 ```
@@ -46,60 +46,73 @@ para que o impacto da inconsistencia dos dados seja disolvido por isso temos o `
 e assim podemos fazer o reset de apenas algumas coisas e mantendo outras ao longo da geração como a pontuação
 e o reset é executado ao final de cada geração limpando ate mesmo a pontuação
 
-
-## Configurações adicionais
-Algumas coisas que podemos configurar por enquanto é o learning rate de nossa rede da seguinte forma `rede_neural.addLearningRate(0.01) ` isso afeta o quanto vai ser o passo de 
-aprendizado da rede a cada epoc
-podemos alterar a função de ativação da seginte forma `rede_neural.ativador = rede.RedeNeural.tanh`
-|Ativação||
+|Funções|Resumo|
 |------|-----|
-|sigmoid | Utilizado para calculos não lineares |
-|tanh|Utilizado para calculos não lineares|
+|inicia|É chamado toda vez que o individuo for instanciado.|
+|update|Responsavel por fazer a exução ou processamento das tarefas do individuo.|
+|cross|Ressebe dois individuos como parametro e é responsavel por criar novos individuos com genes misturados com os dois recebidos.|
+|muta|Faz a mutação nos genes dos individuos.|
+|end|É sempre executado ao final de cada geração apenas do melhor individuo.|
+|semi_reset_individuo|É executado sempre que o individuo terminar uma volta dentro da geração.|
+|reset_individuo|Executado ao final da geração.|
 
-Breve será adicionados outras funções de ativação
-### Lista de funções
 
-|Funções| entrada|retorno|
-|------|-----|----|
-|predict|.predict(array)|Matriz|
-|treinar|.treinar(array_entradas, array_saidas, epoc)||
-|save|.save(nome = "Nome_do_arquivo")||
-|open|.open(nome = "Nome_do_arquivo")||
-|addNeuronio|.addNeuronio(2, 5)||
-|addLearningRate|.addLearningRate(0.01)||
-## Exemplos
-### Exemplo 1
-Treinando e salvando
+## Classe Genetico
+Ele é o núcleo do processo genetico, ele quem vai criar todos os individos e fazer todas as chamadas de funções. tendo esses parametros
+`Genetico (individuo, geracao, indiv, indiv_selec, mutacao, cross, voltas, call_inicio, ordena, show_v, show_g, thread)`
+
+|Parametro|Tipo de dado|Resumo|
+|---------|------------|------|
+|individuo|Classe com a interface de Individuo.|Individuo que vai ser evoluido.|
+|geracao|Int|Número maximo de gerações.|
+|indiv|Int|Quantidade de individuos por geração.|
+|indiv_selec|Int|Quantidade de melhores individuos que será passado pra geração seguinte.|
+|mutacao|Float|Taxa de mutação por geração.|
+|cross|Float|Taxa d CrossOver por geração.|
+|voltas|Int|Quantidade de vezes que cada indivuduo vai ser executado por geração.|
+|call_inicio|Bool|Para a função inicio não ser excutado apenas na primeira geração.|
+|ordena|"d" ou "c"|"d" para decrecente e "c" para crecente.|
+|show_v|Bool|Printar no console os resultados de cada volta em cada geração.|
+|show_g|Bool|Printar no console os resultados de cada geração.|
+|thread|Int|Quantidade de thread destinadas para o processamento, se não ouver para,etro ele irá pegar a quantidade maxima de thread da maquina.|
+
+## Exemplo
+É de extrema importancia que a a classe Genetico e a chamada de iniciar estejam dentro da função main `if __name__ == "__main__":`.
 ```python
-from neuralml import rede
+from aggenerico import AG
+import random
 
-redeneural = rede.RedeNeural()
-redeneural.ativador = rede.RedeNeural.tanh
+class cc (AG.Individuo):
+  def __init__(self):
+    super().__init__()
+   
+  def inicia(self):
+    self.gene_a = random.random()
+    self.gene_b = random.random()
 
-redeneural.addNeuronio(2,5)
-redeneural.addNeuronio(5,1)
+  def semi_reset_individuo(self):
+    self.pontos=0
+    self.pontos_t=0
 
-entrada = [[0,0],[0,1],[1,0],[1,1]]
-saida = [[0],[0],[1],[1]]
+  def reset_individuo(self):
+    self.pontos=0
 
-redeneural.treinar(entrada,saida,epoc=6000)
+  def update(self):
+    self.pontos = self.gene_a + self.gene_b
+    
+  def cross(self,a,b):
+    a.gene_a = b.gene_b
+    b.gene_b = a.gene_a
+    
+  def muta(self):
+    self.gene_a = random.random()/100
+    self.gene_b = random.random()/100
 
-print(redeneural.predict([1,1]))
+  def end(self):
+    print(f"melhor pontuação {self.pontos_t}")
 
-rede_neural.save(nome="teste")
-```
-### Exemplo 2
-Abrindo arquivos salvos
-```python
-from neuralml import rede
+if __name__ == "__main__":
+  ag = AG.Genetico(cc(), geracao = 5000, indiv = 400, ordena = 'd', voltas = 1, call_inicio = True, mutacao = 0.3, cross = 0.3, show_g = True, show_v = True, thread = 8)
+  ag.iniciar()
 
-rede_neural = rede.RedeNeural()
-
-rede_neural.ativador = rede.RedeNeural.tanh
-
-rede_neural.addNeuronio(2,5)
-rede_neural.addNeuronio(5,1)
-rede_neural.open()
-
-print(rede_neural.predict([1,1]))
 ```
