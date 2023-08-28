@@ -92,17 +92,17 @@ class cc (AG.Individuo):
 
   def semi_reset_individuo(self):
     self.pontos=0
-    self.pontos_t=0
-
+    
   def reset_individuo(self):
     self.pontos=0
-
+    self.pontos_t=0
+    
   def update(self):
     self.pontos = self.gene_a + self.gene_b
     
   def cross(self,a,b):
-    a.gene_a = b.gene_b
-    b.gene_b = a.gene_a
+    self.gene_a = b.gene_b
+    self.gene_b = a.gene_a
     
   def muta(self):
     self.gene_a = random.random()/100
