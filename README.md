@@ -85,29 +85,22 @@ import random
 class Max_Num (AG.Individuo):
   def __init__(self):
     super().__init__()
-   
   def inicia(self):
     self.gene_a = random.random()
     self.gene_b = random.random()
-
   def semi_reset_individuo(self):
     self.pontos=0
-    
   def reset_individuo(self):
     self.pontos=0
     self.pontos_t=0
-    
   def update(self):
     self.pontos = self.gene_a + self.gene_b
-    
   def cross(self,a,b):
     self.gene_a = b.gene_b
     self.gene_b = a.gene_a
-    
   def muta(self):
     self.gene_a = random.random()/100
     self.gene_b = random.random()/100
-
   def end(self):
     print(f"melhor pontuação {self.pontos_t}")
 
