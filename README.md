@@ -82,7 +82,7 @@ Ele é o núcleo do processo genetico, ele quem vai criar todos os individos e f
 from aggenerico import AG
 import random
 
-class cc (AG.Individuo):
+class Max_Num (AG.Individuo):
   def __init__(self):
     super().__init__()
    
@@ -112,7 +112,19 @@ class cc (AG.Individuo):
     print(f"melhor pontuação {self.pontos_t}")
 
 if __name__ == "__main__":
-  ag = AG.Genetico(cc(), geracao = 5000, indiv = 400, ordena = 'd', voltas = 1, call_inicio = True, mutacao = 0.3, cross = 0.3, show_g = True, show_v = True, thread = 8)
+  ag = AG.Genetico( Max_Num(),
+                    geracao = 5000,
+                    indiv = 400,
+                    indiv_selec = 3,
+                    ordena = 'd',
+                    mutacao = 0.3,
+                    cross = 0.7,
+                    voltas = 1,
+                    call_inicio = True,
+                    show_g = True,
+                    show_v = False,
+                    thread = 8
+)
   ag.iniciar()
 
 ```
